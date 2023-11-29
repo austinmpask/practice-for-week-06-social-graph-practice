@@ -55,13 +55,29 @@ class SocialNetwork {
   }
 
   getRecommendedFollows(userID, degrees) {
-    let followers = [];
-    for (let i = 1; i <= this.currentID; i++) {
-      if (!this.follows[userID].has(i)) {
-        followers.push(i);
+    let queue = [[userID]];
+    let set = new Set();
+    let recs = [];
+
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const lastNode = path[path.length - 1];
+      for (let neighbor of this.follows[lastNode]) {
+        if (
+          lastNode !== userID &&
+          !this.follows[userID].has(neighbor) &&
+          path.length - 1 <= degrees &&
+          neighbor !== userID
+        ) {
+          recs.push(neighbor);
+        }
+        if (!set.has(neighbor)) {
+          set.add(neighbor);
+          queue.push(path.concat(neighbor));
+        }
       }
     }
-    return followers;
+    return recs;
   }
 }
 
