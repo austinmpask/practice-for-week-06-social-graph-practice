@@ -1,6 +1,12 @@
 // Implement the SocialNetwork class here
-class SocialNetwork {
+class User {
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
+  }
+}
 
+class SocialNetwork {
   constructor() {
     this.users = {};
     this.follows = {};
@@ -8,27 +14,54 @@ class SocialNetwork {
   }
 
   addUser(name) {
-    // Your code here
+    this.currentID++;
+    const user = new User(this.currentID, name);
+    this.users[this.currentID] = user;
+    this.follows[this.currentID] = new Set();
+    return this.currentID;
   }
 
   getUser(userID) {
-    // Your code here
+    return userID in this.users ? this.users[userID] : null;
   }
 
   follow(userID1, userID2) {
     // Your code here
+    if (!(userID1 in this.users && userID2 in this.users)) return false;
+    if (!this.follows[userID1].has(userID2)) {
+      this.follows[userID1].add(userID2);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   getFollows(userID) {
-    // Your code here
+    if (userID in this.follows) {
+      return this.follows[userID];
+    } else {
+      return false;
+    }
   }
 
   getFollowers(userID) {
-    // Your code here
+    let followers = new Set();
+    for (let i = 1; i <= this.currentID; i++) {
+      if (this.follows[i].has(userID)) {
+        followers.add(i);
+      }
+    }
+    return followers;
   }
 
   getRecommendedFollows(userID, degrees) {
-    // Your code here
+    let followers = [];
+    for (let i = 1; i <= this.currentID; i++) {
+      if (!this.follows[userID].has(i)) {
+        followers.push(i);
+      }
+    }
+    return followers;
   }
 }
 
